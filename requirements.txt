@@ -1,0 +1,7 @@
+pytest
+codecov
+pytest-cov
+black
+boto3
+moto
+starlette
