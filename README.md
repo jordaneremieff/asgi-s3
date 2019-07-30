@@ -8,13 +8,19 @@
 </a>
 
 
-Staticfile management tools and [ASGI](https://asgi.readthedocs.io/en/latest/) middleware support for [Amazon S3](https://aws.amazon.com/s3/). 
+Static file management tools and [ASGI](https://asgi.readthedocs.io/en/latest/) middleware support for [Amazon S3](https://aws.amazon.com/s3/). 
 
-**Work in Progress**: A lot of what is here currently will be changing.
+**Work in Progress**: A lot of what is here currently will be changing, not recommended for any serious usage at this point.
 
 ## CLI
 
-`s3 sync`
+```shell
+s3 create-bucket  Create a new S3 bucket.
+
+s3 list-buckets   List all S3 buckets.
+
+s3 sync-bucket    Sync a bucket with a local static file directory.
+```
 
 ...todo
 

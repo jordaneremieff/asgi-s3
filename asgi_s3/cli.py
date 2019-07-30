@@ -21,6 +21,9 @@ def get_default_region_name() -> str:  # pragma: no cover
 @click.argument("bucket_name", required=False)
 @click.argument("region_name", required=False)
 def create_bucket(bucket_name: str, region_name: str) -> None:
+    """
+    Create a new S3 bucket.
+    """
     if not bucket_name:
         click.echo("No bucket name provided, one will be generated.")
         bucket_name = f"asgi-s3-{uuid.uuid4()}"
@@ -46,12 +49,18 @@ def create_bucket(bucket_name: str, region_name: str) -> None:
 @click.argument("bucket_name")
 @click.argument("static_dir")
 def sync_bucket(bucket_name: str, static_dir: str) -> None:
+    """
+    Sync a bucket with a local static file directory.
+    """
     storage = S3Storage(bucket_name, static_dir)
     storage.sync()
 
 
 @s3.command()
 def list_buckets() -> None:
+    """
+    List all S3 buckets.
+    """
     s3_client = boto3.client("s3")
     response = s3_client.list_buckets()
     buckets = [bucket["Name"] for bucket in response["Buckets"]]
