@@ -45,9 +45,9 @@ def create_bucket(bucket_name: str, region_name: str) -> None:
 @s3.command()
 @click.argument("bucket_name")
 @click.argument("static_dir")
-def sync(bucket_name: str, static_dir: str) -> None:
+def sync_bucket(bucket_name: str, static_dir: str) -> None:
     storage = S3Storage(bucket_name, static_dir)
-    storage.sync_files()
+    storage.sync()
 
 
 @s3.command()
