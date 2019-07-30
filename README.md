@@ -12,6 +12,16 @@ Static file management tools and [ASGI](https://asgi.readthedocs.io/en/latest/) 
 
 **Work in Progress**: A lot of what is here currently will be changing, not recommended for any serious usage at this point.
 
+**Requirements**: Python 3.6+
+
+## Installation
+
+```shell
+pip install asgi-s3
+```
+
+...but you probably just want to clone the `master` branch for the moment.
+
 ## CLI
 
 ```shell
