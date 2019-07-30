@@ -3,4 +3,3 @@ source =
     asgi_s3
 omit =
     tests/*
-    asgi_s3/cli.py

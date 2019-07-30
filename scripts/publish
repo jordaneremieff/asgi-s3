@@ -1,6 +1,6 @@
 #!/bin/sh -e
 
-export VERSION=`cat asgi_storage.__version__.py | grep __version__ | sed "s/__version__ = //" | sed "s/'//g"`
+export VERSION=`cat asgi_s3/__version__.py | grep __version__ | sed "s/__version__ = //" | sed "s/'//g"`
 export PREFIX=""
 if [ -d 'venv' ] ; then
     export PREFIX="venv/bin/"
@@ -12,8 +12,8 @@ if ! command -v "${PREFIX}twine" &>/dev/null ; then
     exit 1
 fi
 
-find asgi_storage -type f -name "*.py[co]" -delete
-find asgi_storage -type d -name __pycache__ -delete
+find asgi_s3 -type f -name "*.py[co]" -delete
+find asgi_s3 -type d -name __pycache__ -delete
 
 ${PREFIX}python setup.py sdist
 ${PREFIX}twine upload dist/*

@@ -1,5 +1,13 @@
 # asgi-s3
 
+<a href="https://pypi.org/project/asgi-s3/">
+    <img src="https://badge.fury.io/py/asgi-s3.svg" alt="Package version">
+</a>
+<a href="https://travis-ci.org/erm/asgi-s3">
+    <img src="https://travis-ci.org/erm/asgi-s3.svg?branch=master" alt="Build Status">
+</a>
+
+
 Staticfile management tools and [ASGI](https://asgi.readthedocs.io/en/latest/) middleware support for [Amazon S3](https://aws.amazon.com/s3/). 
 
 **Work in Progress**: A lot of what is here currently will be changing.

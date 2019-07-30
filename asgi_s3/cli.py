@@ -1,11 +1,13 @@
 import boto3
 import click
 import uuid
+from botocore.exceptions import ClientError
+
 
 from asgi_s3.storage import S3Storage
 
 
-@click.group()
+@click.group()  # pragma: no cover
 def s3() -> None:
     pass
 
@@ -27,13 +29,17 @@ def create_bucket(bucket_name: str, region_name: str) -> None:
         click.echo(f"No region specified, using default.")
         region_name = get_default_region_name()
 
-    print(bucket_name)
-    print(region_name)
-    # s3_client = boto3.client("s3")
-    # res = s3_client.create_bucket(
-    #     Bucket=s3_bucket_name,
-    #     CreateBucketConfiguration={"LocationConstraint": region_name},
-    # )
+    s3_client = boto3.client("s3")
+
+    try:
+        s3_client.create_bucket(
+            Bucket=bucket_name,
+            CreateBucketConfiguration={"LocationConstraint": region_name},
+        )
+    except ClientError as exc:
+        click.echo(f"Error: {exc}")
+    else:
+        click.echo(f"Bucket created! Bucket name: {bucket_name} Region: {region_name}")
 
 
 @s3.command()
@@ -41,7 +47,15 @@ def create_bucket(bucket_name: str, region_name: str) -> None:
 @click.argument("static_dir")
 def sync(bucket_name: str, static_dir: str) -> None:
     storage = S3Storage(bucket_name, static_dir)
-    storage.sync()
+    storage.sync_files()
+
+
+@s3.command()
+def list_buckets() -> None:
+    s3_client = boto3.client("s3")
+    response = s3_client.list_buckets()
+    buckets = [bucket["Name"] for bucket in response["Buckets"]]
+    click.echo(buckets)
 
 
 # @s3.command()
@@ -51,11 +65,3 @@ def sync(bucket_name: str, static_dir: str) -> None:
 #     response = s3_client.list_objects_v2(Bucket=bucket_name)
 #     key_count = response["KeyCount"]
 #     click.echo(f"Bucket '{bucket_name}' contains {key_count} files")
-
-
-@s3.command()
-def list_buckets() -> None:
-    s3_client = boto3.client("s3")
-    response = s3_client.list_buckets()
-    buckets = [bucket["Name"] for bucket in response["Buckets"]]
-    click.echo(buckets)
