@@ -1,25 +1,19 @@
-import boto3
 from moto import mock_s3
 
 from starlette.responses import HTMLResponse
 from starlette.testclient import TestClient
 from starlette.applications import Starlette
 
-
-from asgi_s3.middleware import S3StorageMiddleware
+from asgi_s3.middleware import S3StorageMiddleware, s3_url_for
 
 
 @mock_s3
-def test_middleware() -> None:
+def test_asgi_middleware(mock_storage_context) -> None:
+    context = mock_storage_context()
 
-    region_name = "us-east-1"
-    bucket_name = "my-bucket"
     static_dir = "static"
-    conn = boto3.resource("s3", region_name=region_name)
-    conn.create_bucket(Bucket=bucket_name)
 
     async def app(scope, receive, send):
-        url_for = scope["asgi_s3"]["s3_url_for"]
         await send(
             {
                 "type": "http.response.start",
@@ -32,7 +26,7 @@ def test_middleware() -> None:
         <html>
         <head>
             <title>ASGI S3 example</title>
-            <link rel="stylesheet" href="{url_for('style.css')}">
+            <link rel="stylesheet" href="{s3_url_for('style.css')}">
         </head>
         <body>
         Hello, world.
@@ -41,7 +35,9 @@ def test_middleware() -> None:
         """
         await send({"type": "http.response.body", "body": html_content.encode()})
 
-    app = S3StorageMiddleware(app, bucket_name=bucket_name, static_dir=static_dir)
+    app = S3StorageMiddleware(
+        app, bucket_name=context.bucket_name, static_dir=static_dir
+    )
     client = TestClient(app)
     response = client.get("/")
     assert response.status_code == 200
@@ -61,11 +57,17 @@ def test_middleware() -> None:
         """
     )
 
+
+@mock_s3
+def test_starlette_middleware(mock_storage_context) -> None:
+    context = mock_storage_context()
+
+    static_dir = "static"
+
     app = Starlette()
 
     @app.route("/")
     async def home(request):
-        s3_url_for = request.scope["asgi_s3"]["s3_url_for"]
         url = s3_url_for("style.css")
         html_content = f"""
         <!DOCTYPE html>
@@ -82,7 +84,7 @@ def test_middleware() -> None:
         return HTMLResponse(html_content)
 
     app.add_middleware(
-        S3StorageMiddleware, bucket_name=bucket_name, static_dir=static_dir
+        S3StorageMiddleware, bucket_name=context.bucket_name, static_dir=static_dir
     )
 
     client = TestClient(app)

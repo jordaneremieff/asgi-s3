@@ -15,7 +15,7 @@ setup(
     url="https://github.com/erm/asgi-s3",
     description="ASGI S3 storage",
     long_description=get_long_description(),
-    install_requires=["boto3", "click"],
+    install_requires=["boto3", "click", 'contextvars;python_version<"3.7"'],
     entry_points={"console_scripts": ["s3 = asgi_s3.__main__:main"]},
     long_description_content_type="text/markdown",
     author="Jordan Eremieff",

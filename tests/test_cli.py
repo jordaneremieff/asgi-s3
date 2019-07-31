@@ -1,11 +1,8 @@
-import mock
-
 import boto3
 from moto import mock_s3
 from click.testing import CliRunner
 
-from asgi_s3.storage import S3Storage
-from asgi_s3.cli import create_bucket, list_buckets, sync_bucket
+from asgi_s3.cli import create_bucket, list_buckets  # , sync_bucket
 
 
 @mock_s3
@@ -15,10 +12,7 @@ def test_cli() -> None:
     runner = CliRunner()
     result = runner.invoke(create_bucket, [bucket_name, region_name])
     assert result.exit_code == 0
-    assert (
-        result.output
-        == "Bucket created! Bucket name: my-bucket Region: ap-southeast-1\n"
-    )
+    assert result.output == "Bucket created! Bucket: my-bucket Region: ap-southeast-1\n"
 
 
 @mock_s3
@@ -66,23 +60,15 @@ def test_cli_list_buckets() -> None:
     assert result.output == "['my-bucket', 'my-bucket-2']\n"
 
 
-@mock_s3
-def test_cli_sync() -> None:
-    region_name = "ap-southeast-1"
-    bucket_name = "my-bucket"
-    static_dir = "static"
-    s3_client = boto3.client("s3")
-    s3_client.create_bucket(
-        Bucket=bucket_name,
-        CreateBucketConfiguration={"LocationConstraint": region_name},
-    )
-    # with mock.patch("os.walk") as walk:
-    #     walk.return_value = [
-    #         ("/static", ("css",), ("js",)),
-    #         ("/static/css", (), ("style.css",)),
-    #         ("/static/js", (), ("index.js",)),
-    #     ]
-    runner = CliRunner()
-    result = runner.invoke(sync_bucket, [bucket_name, static_dir])
-    # print(walk)
-    print(result.output)
+# @mock_s3
+# def test_cli_sync() -> None:
+#     region_name = "ap-southeast-1"
+#     bucket_name = "my-bucket"
+#     static_dir = "static"
+#     s3_client = boto3.client("s3")
+#     s3_client.create_bucket(
+#         Bucket=bucket_name,
+#         CreateBucketConfiguration={"LocationConstraint": region_name},
+#     )
+#     runner = CliRunner()
+#     result = runner.invoke(sync_bucket, [bucket_name, static_dir])

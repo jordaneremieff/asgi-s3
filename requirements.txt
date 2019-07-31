@@ -5,3 +5,4 @@ black
 boto3
 moto
 starlette
+contextvars; python_version < '3.7'

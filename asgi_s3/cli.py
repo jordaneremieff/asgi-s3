@@ -4,17 +4,12 @@ import uuid
 from botocore.exceptions import ClientError
 
 
-from asgi_s3.storage import S3Storage
+from asgi_s3.storage import S3Storage, S3Config
 
 
 @click.group()  # pragma: no cover
 def s3() -> None:
     pass
-
-
-def get_default_region_name() -> str:  # pragma: no cover
-    session = boto3.session.Session()
-    return session.region_name
 
 
 @s3.command()
@@ -24,35 +19,37 @@ def create_bucket(bucket_name: str, region_name: str) -> None:
     """
     Create a new S3 bucket.
     """
+
     if not bucket_name:
         click.echo("No bucket name provided, one will be generated.")
         bucket_name = f"asgi-s3-{uuid.uuid4()}"
 
     if not region_name:
         click.echo(f"No region specified, using default.")
-        region_name = get_default_region_name()
 
-    s3_client = boto3.client("s3")
+    config = S3Config(bucket_name=bucket_name, region_name=region_name)
 
     try:
-        s3_client.create_bucket(
+        config.client.create_bucket(
             Bucket=bucket_name,
-            CreateBucketConfiguration={"LocationConstraint": region_name},
+            CreateBucketConfiguration={"LocationConstraint": config.region_name},
         )
     except ClientError as exc:
         click.echo(f"Error: {exc}")
     else:
-        click.echo(f"Bucket created! Bucket name: {bucket_name} Region: {region_name}")
+        click.echo(
+            f"Bucket created! Bucket: {config.bucket_name} Region: {config.region_name}"
+        )
 
 
 @s3.command()
 @click.argument("bucket_name")
 @click.argument("static_dir")
-def sync_bucket(bucket_name: str, static_dir: str) -> None:
+def sync_bucket(bucket_name: str, static_dir: str) -> None:  # pragma: no cover
     """
     Sync a bucket with a local static file directory.
     """
-    storage = S3Storage(bucket_name, static_dir)
+    storage = S3Storage(bucket_name=bucket_name, static_dir=static_dir)
     storage.sync()
 
 

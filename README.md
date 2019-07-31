@@ -39,11 +39,17 @@ s3 sync-bucket    Sync a bucket with a local static file directory.
 The middleware is designed to work with any ASGI application. Here is raw ASGI example:
 
 ```python
+from asgi_s3.middleware import S3StorageMiddleware, s3_url_for
 
-from asgi_s3.middleware import S3StorageMiddleware
+
+AWS_ACCESS_KEY_ID = "access-key-id"
+AWS_SECRET_ACCESS_KEY = "secret-access-key"
+BUCKET_NAME = "my-bucket"
+REGION_NAME = "region-name"
+STATIC_DIR = "path/to/static/files"
+
 
 async def app(scope, receive, send):
-    url_for = scope["asgi_s3"]["url_for"]
     await send(
         {
             "type": "http.response.start",
@@ -56,7 +62,7 @@ async def app(scope, receive, send):
     <html>
     <head>
         <title>ASGI S3 example</title>
-        <link rel="stylesheet" href="{url_for('style.css')}">
+        <link rel="stylesheet" href="{s3_url_for('style.css')}">
     </head>
     <body>
     Hello, world.
@@ -68,8 +74,11 @@ async def app(scope, receive, send):
 
 app = S3StorageMiddleware(
     app,
-    bucket_name="my-bucket",
-    static_dir="path/to/static/files",
+    bucket_name=BUCKET_NAME,
+    static_dir=STATIC_DIR,
+    region_name=REGION_NAME,
+    aws_access_key_id=AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
 )
 ```
 
@@ -79,23 +88,33 @@ And here is an example using [Starlette](https://www.starlette.io/):
 from starlette.applications import Starlette
 from starlette.templating import Jinja2Templates
 
-from asgi_s3.middleware import S3StorageMiddleware
+from asgi_s3.middleware import S3StorageMiddleware, s3_url_for
+
 
 templates = Jinja2Templates("templates")
 app = Starlette()
 
 @app.route("/")
 def homepage(request):
-    s3_url_for = request.scope["asgi_s3"]["s3_url_for"]
     return templates.TemplateResponse(
         "index.html", {"request": request, "s3_url_for": s3_url_for}
     )
 
 
+AWS_ACCESS_KEY_ID = "access-key-id"
+AWS_SECRET_ACCESS_KEY = "secret-access-key"
+BUCKET_NAME = "my-bucket"
+REGION_NAME = "region-name"
+STATIC_DIR = "path/to/static/files"
+
+
 app.add_middleware(
     S3StorageMiddleware,
-    bucket_name="my-bucket",
-    static_dir="path/to/static/files",
+    bucket_name=BUCKET_NAME,
+    static_dir=STATIC_DIR,
+    region_name=REGION_NAME,
+    aws_access_key_id=AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
 )
 ```
 
