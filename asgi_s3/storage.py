@@ -20,7 +20,7 @@ class S3Config:
         aws_secret_access_key: str = None,
     ) -> None:
 
-        if None in (region_name, aws_access_key_id, aws_secret_access_key):
+        if not any((region_name, aws_access_key_id, aws_secret_access_key)):
             session = boto3.session.Session()
 
             if region_name is None:

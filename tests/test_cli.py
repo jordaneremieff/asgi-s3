@@ -8,11 +8,13 @@ from asgi_s3.cli import create_bucket, list_buckets  # , sync_bucket
 @mock_s3
 def test_cli() -> None:
     region_name = "ap-southeast-1"
-    bucket_name = "my-bucket"
+    bucket_name = "my-bucket-1"
     runner = CliRunner()
     result = runner.invoke(create_bucket, [bucket_name, region_name])
     assert result.exit_code == 0
-    assert result.output == "Bucket created! Bucket: my-bucket Region: ap-southeast-1\n"
+    assert (
+        result.output == "Bucket created! Bucket: my-bucket-1 Region: ap-southeast-1\n"
+    )
 
 
 @mock_s3
