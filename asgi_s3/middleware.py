@@ -1,6 +1,5 @@
 from contextvars import ContextVar
 
-
 from asgi_s3.storage import S3Storage
 
 

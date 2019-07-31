@@ -6,11 +6,14 @@ python:
   - "3.6"
   - "3.7"
 
+before_install:
+  - export BOTO_CONFIG=/dev/null
+
 install:
-    - pip install -U -r requirements.txt
+  - pip install -U -r requirements.txt
 
 script:
-    - scripts/test
+  - scripts/test
 
 after_script:
-- codecov
+  - codecov
