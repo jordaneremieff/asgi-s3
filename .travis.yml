@@ -7,7 +7,7 @@ python:
   - "3.7"
 
 before_install:
-  - export BOTO_CONFIG=/dev/null
+  - export BOTO_CONFIG=/dev/null # https://github.com/spulec/moto/issues/1941
 
 install:
   - pip install -U -r requirements.txt
