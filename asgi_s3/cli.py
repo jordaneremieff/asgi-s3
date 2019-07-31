@@ -15,7 +15,7 @@ def s3() -> None:
 @s3.command()
 @click.argument("bucket_name", required=False)
 @click.argument("region_name", required=False)
-def create_bucket(bucket_name: str, region_name: str) -> None:
+def create_bucket(bucket_name: str, region_name: str = None) -> None:
     """
     Create a new S3 bucket.
     """
